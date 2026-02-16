@@ -1,0 +1,6 @@
+// include main path.csp which defines moveset and goals
+#include "path_search.csp";
+
+// prioritise visited positions when returning home to avoid
+// bumping into obstacles or running into new survivors
+#assert VisitedMove() reaches home;

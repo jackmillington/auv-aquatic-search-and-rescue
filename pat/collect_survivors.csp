@@ -1,0 +1,6 @@
+// include main path.csp which defines moveset and goals
+#include "path_rescue.csp";
+
+// prioritise unvisited positions when collecting survivors so
+// that we may also visit locations during the collection process
+#assert UnvisitedMove() reaches noSurvivors;

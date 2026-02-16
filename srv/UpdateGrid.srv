@@ -1,0 +1,8 @@
+# models request/response for the update_grid service
+# this updates gazebo with the new locations of objects
+
+# expects 1D array of all locations, which are translated into
+# 2D coordinate system
+std_msgs/Int32MultiArray grid
+---
+std_msgs/Int32MultiArray altered_grid

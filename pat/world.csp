@@ -1,0 +1,28 @@
+#define Visited -1;
+#define Unvisited 0;
+#define Sub 1;
+#define Sub2 4;
+#define Hostile 2;
+#define Survivor 3;
+
+#define SUB_HOME_X 0;
+#define SUB_HOME_Y 0;
+#define Rows 8;
+#define Cols 8;
+#define maxCapacity 2;
+
+var world[Rows][Cols]:{Visited..Sub2} = [
+-1, -1, -1, -1, 2, 0, 0, 0, 
+-1, -1, 2, 2, 0, 2, 0, 0, 
+2, -1, -1, 0, 0, 2, 0, 0, 
+2, 2, -1, -1, -1, -1, -1, -1, 
+-1, 2, 2, 0, 0, -1, -1, -1, 
+-1, -1, 2, 2, 2, 2, -1, -1, 
+3, 0, 0, 2, -1, 2, -1, -1, 
+0, 0, 0, 2, -1, -1, -1, 3
+];
+
+// Position of sub
+var xpos:{0..Rows-1} = 1;
+var ypos:{0..Cols-1} = 0;
+var onBoard:{0..maxCapacity} = 0;

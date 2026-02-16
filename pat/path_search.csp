@@ -1,0 +1,110 @@
+/*
+This csp PAT file is responsible for generating a moveset which will achieve a goal
+based on the robot's current interpretation of its environment. It expects world.csp
+to be updated with the robot's current understanding of hostiles, survivors, and
+visited squares.
+
+It defines two types of moves for every direction (up, left, right, down). These
+are visited/unvisited variants, respectively intending to prioritise visiting
+already visited locations or unvisited locations. When moving to a new location,
+the location is marked as visited. If that location was a survivor, they are
+"picked up" by incrementing a variable onBoard.
+
+The robot's position is mainted by xpos and ypos.
+
+It also defines three core goals. These are:
+home:
+This goal simply attempts to bring the robot back to its home position, as given
+by SUB_HOME_X and SUB_HOME_Y provided in world.csp.
+
+goalAreaChecked:
+This goal attempts to mark all locations as visited, and to return to the home position
+during the process.
+
+noSurvivors:
+This goal ensures that all locations are void of survivors if there are remaining spaces
+on the bot (onBoard != maxCapacity). In the case that the bot has reached maximum carrying
+capacity, survivors are left on the board. In both cases, there is the additional goal of
+returning the robot back home.
+*/
+
+// include the expected world.csp file which defines the current environment & parameters
+#include "world.csp";
+
+// primitive tasks for overall move task
+// actions if conditions satisfied:
+	// move the position of the sub
+	// mark the new position as visited
+	// pick up survivor if there was one (onBoard++)
+
+// in order to move up:
+// need to check if the current position is not at the boundary
+	// xpos != upper boundry, which is first row in world (0)
+// need to check if the next position is not an obstacle
+	// world[xpos-1][ypos] != Hostile
+// need to check if sub is at max capacity ( && (onBoard != maxCapacity))
+	// if at max capacity, next position should not include a survivor, as we cannot pick them up
+	// || world[xpos-1][ypos] != Survivor
+#define MoveUpCond (xpos != 0) && (world[xpos-1][ypos] != Hostile) && (world[xpos-1][ypos] != Survivor);
+#define MoveUpCondVisited (world[xpos-1][ypos] == Visited);
+#define MoveUpCondNotVisited (world[xpos-1][ypos] != Visited);
+MoveUpIfVisited() = [MoveUpCond && MoveUpCondVisited] moveUp{xpos = xpos - 1; if(world[xpos][ypos] == Survivor) {onBoard++;}; world[xpos][ypos] = Visited; } -> Skip;
+MoveUpIfNotVisited() = [MoveUpCond && MoveUpCondNotVisited] moveUp{xpos = xpos - 1; if(world[xpos][ypos] == Survivor) {onBoard++;}; world[xpos][ypos] = Visited;} -> Skip;
+
+// in order to move down:
+// need to check if the current position is not at the boundary
+	// xpos != lower boundry, which is last row in world (Rows - 1)
+// need to check if the next position is not an obstacle
+	// world[xpos+1][ypos] != Hostile
+// need to check if sub is at max capacity ( && (onBoard != maxCapacity))
+	// if at max capacity, next position should not include a survivor, as we cannot pick them up
+	// || world[xpos+1][ypos] != Survivor
+#define MoveDownCond (xpos != Rows - 1) && (world[xpos+1][ypos] != Hostile) && (world[xpos+1][ypos] != Survivor);
+#define MoveDownCondVisited (world[xpos+1][ypos] == Visited);
+#define MoveDownCondNotVisited (world[xpos+1][ypos] != Visited);
+MoveDownIfVisited() = [MoveDownCond && MoveDownCondVisited] moveDown{xpos = xpos + 1; if(world[xpos][ypos] == Survivor) {onBoard++;}; world[xpos][ypos] = Visited;} -> Skip;
+MoveDownIfNotVisited() = [MoveDownCond && MoveDownCondNotVisited] moveDown{xpos = xpos + 1; if(world[xpos][ypos] == Survivor) {onBoard++;}; world[xpos][ypos] = Visited;} -> Skip;
+
+// in order to move left:
+// need to check if the current position is not at the boundary
+	// ypos != left boundry, which is first column in world (0)
+// need to check if the next position is not an obstacle
+	// world[xpos][ypos-1] != Hostile
+// need to check if sub is at max capacity ( && (onBoard != maxCapacity))
+	// if at max capacity, next position should not include a survivor, as we cannot pick them up
+	// || world[xpos][ypos-1] != Survivor
+#define MoveLeftCond (ypos != 0) && (world[xpos][ypos-1] != Hostile) && (world[xpos][ypos-1] != Survivor);
+#define MoveLeftCondVisited (world[xpos][ypos-1] == Visited);
+#define MoveLeftCondNotVisited (world[xpos][ypos-1] != Visited);
+MoveLeftIfVisited() = [MoveLeftCond && MoveLeftCondVisited] moveLeft{ypos = ypos - 1; if(world[xpos][ypos] == Survivor) {onBoard++;};world[xpos][ypos] = Visited;} -> Skip;
+MoveLeftIfNotVisited() = [MoveLeftCond && MoveLeftCondNotVisited] moveLeft{ypos = ypos - 1; if(world[xpos][ypos] == Survivor) {onBoard++;}; world[xpos][ypos] = Visited;} -> Skip;
+
+// in order to move right:
+// need to check if the current position is not at the boundary
+	// ypos != right boundry, which is last column in world (Cols - 1)
+// need to check if the next position is not an obstacle
+	// world[xpos][ypos+1] != Hostile
+// need to check if sub is at max capacity ( && (onBoard != maxCapacity))
+	// if at max capacity, next position should not include a survivor, as we cannot pick them up
+	// || world[xpos][ypos+1] != Survivor
+#define MoveRightCond (ypos != Cols - 1) && (world[xpos][ypos+1] != Hostile) && (world[xpos][ypos+1] != Survivor);
+#define MoveRightCondVisited (world[xpos][ypos+1] == Visited);
+#define MoveRightCondNotVisited (world[xpos][ypos+1] != Visited);
+MoveRightIfVisited() = [MoveRightCond && MoveRightCondVisited] moveRight{ypos = ypos + 1; if(world[xpos][ypos] == Survivor) {onBoard++;}; world[xpos][ypos] = Visited;} -> Skip;
+MoveRightIfNotVisited() = [MoveRightCond && MoveRightCondNotVisited] moveRight{ypos = ypos + 1; if(world[xpos][ypos] == Survivor) {onBoard++;}; world[xpos][ypos] = Visited;} -> Skip;
+
+// MoveIfNotVisited attempts to move to the next location that has not previously been visited
+MoveIfNotVisited() = MoveUpIfNotVisited() [] MoveDownIfNotVisited() [] MoveLeftIfNotVisited() [] MoveRightIfNotVisited();
+// MoveIfVisited attempts to move to the next location that has previously been visited
+MoveIfVisited() = MoveUpIfVisited() [] MoveDownIfVisited() [] MoveLeftIfVisited() [] MoveRightIfVisited();
+// UnVisitedMove priortises MoveIfNotVisited moves, but uses MoveIfVisited when necessary.
+UnvisitedMove() = (MoveIfVisited() [] MoveIfNotVisited());UnvisitedMove();
+// VisitedMove priortises MoveIfVisited moves, but uses MoveIfNotVisited when necessary.
+VisitedMove() = (MoveIfNotVisited() [] MoveIfVisited());VisitedMove();
+
+// primitive goal, sub has returned to its home position
+#define home (xpos == SUB_HOME_X && ypos == SUB_HOME_Y);
+// primitive goal, entire survey area has been checked for survivors
+#define goalAreaChecked (&& i:{0..Rows-1}@(&& j:{0..Cols-1}@(world[i][j] == Visited || world[i][j] == Hostile || world[i][j] == Survivor)) && home);
+// primitive goal, entire survey area is clear of known survivors, and has returned home if sub hit max capacity
+#define noSurvivors ((&& i:{0..Rows-1}@(&& j:{0..Cols-1}@(world[i][j] != Survivor)) && (onBoard != maxCapacity || home)) || (onBoard == maxCapacity && home));
