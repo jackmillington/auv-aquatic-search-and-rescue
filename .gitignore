@@ -1,0 +1,7 @@
+build/
+devel/
+logs/
+.DS_Store
+.vscode/
+.idea/
+pat/pat_output.txt

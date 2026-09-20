@@ -7,12 +7,12 @@
 #include <map>
 #include <cmath>
 #include "geometry_msgs/Point.h"
-#include "assignment_3/UpdateGrid.h"
+#include "auv_search_rescue/UpdateGrid.h"
 #include "gazebo_msgs/GetModelState.h"
 #include "gazebo_msgs/SpawnModel.h"
 #include "gazebo_msgs/DeleteModel.h"
 #include "gazebo_msgs/SetModelState.h"
-#include "assignment_3/Sensor.h"
+#include "auv_search_rescue/Sensor.h"
 #include "communal_defines.cpp"
 
 // width of each grid (currently set to 1m)
@@ -41,7 +41,7 @@ bool submarine1Spawned = false;
 bool submarine2Spawned = false;
 // home directory and model directory
 std::string homeDir = getenv("HOME");
-std::string modelDir = homeDir + "/catkin_ws/src/3806ict_assignment_3/models/";
+std::string modelDir = homeDir + "/catkin_ws/src/3806ict_auv_search_rescue/models/";
 
 // comparison function for Point
 struct ComparePoints
@@ -63,17 +63,17 @@ std::map<geometry_msgs::Point, std::string, ComparePoints> objectPositions;
 // takes a model type and returns a spawn model request (gazebo_msgs::SpawnModel)
 gazebo_msgs::SpawnModel createSpawnRequest(int modelType, geometry_msgs::Point position);
 // updates gazebo with the new positions of objects, spawns them if non-existent
-bool updateGrid(assignment_3::UpdateGrid::Request &req, assignment_3::UpdateGrid::Response &res);
+bool updateGrid(auv_search_rescue::UpdateGrid::Request &req, auv_search_rescue::UpdateGrid::Response &res);
 // simulates something like a sonar sensor which detects objects. Can take variable sensorRange
 // and returns an array of detected objects, corresponding to the distance away from the bot's
 // current position in east, north, west, south. The bot's current position is taken from
 // gazebo get_model_state in an attempt to model a real sensor
-bool hostileSensor(assignment_3::Sensor::Request &req, assignment_3::Sensor::Response &res);
+bool hostileSensor(auv_search_rescue::Sensor::Request &req, auv_search_rescue::Sensor::Response &res);
 // simulates something like a infrared sensor which detects objects. Can take variable sensorRange
 // and returns an array of detected objects, corresponding to the distance away from the bot's
 // current position in east, north, west, south. The bot's current position is taken from
 // gazebo get_model_state in an attempt to model a real sensor
-bool survivorSensor(assignment_3::Sensor::Request &req, assignment_3::Sensor::Response &res);
+bool survivorSensor(auv_search_rescue::Sensor::Request &req, auv_search_rescue::Sensor::Response &res);
 
 // main
 int main(int argc, char **argv)
@@ -173,7 +173,7 @@ gazebo_msgs::SpawnModel createSpawnRequest(int modelType, geometry_msgs::Point p
 	return spawn;
 }
 
-bool updateGrid(assignment_3::UpdateGrid::Request &req, assignment_3::UpdateGrid::Response &res)
+bool updateGrid(auv_search_rescue::UpdateGrid::Request &req, auv_search_rescue::UpdateGrid::Response &res)
 {
 	// Initialise new grid
 	std_msgs::Int32MultiArray read_grid = req.grid;
@@ -270,7 +270,7 @@ bool updateGrid(assignment_3::UpdateGrid::Request &req, assignment_3::UpdateGrid
 	return true;
 }
 
-bool hostileSensor(assignment_3::Sensor::Request &req, assignment_3::Sensor::Response &res)
+bool hostileSensor(auv_search_rescue::Sensor::Request &req, auv_search_rescue::Sensor::Response &res)
 {
 	// initialise all to false
 	res.objectNorth = false;
@@ -329,7 +329,7 @@ bool hostileSensor(assignment_3::Sensor::Request &req, assignment_3::Sensor::Res
 	return true;
 }
 
-bool survivorSensor(assignment_3::Sensor::Request &req, assignment_3::Sensor::Response &res)
+bool survivorSensor(auv_search_rescue::Sensor::Request &req, auv_search_rescue::Sensor::Response &res)
 {
 	// initialise all to false
 	res.objectNorth = false;
