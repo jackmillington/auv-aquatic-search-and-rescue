@@ -12,6 +12,7 @@
 #include <fstream>
 #include <queue>
 #include <string>
+#include <sstream>
 #include <utility>
 
 #define GAZEBO_SIMULATION_RATE 3 // how many moves per second will that will be processed/simulated
