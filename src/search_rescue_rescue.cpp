@@ -24,8 +24,9 @@
 #define SURVEY_AREA 0
 #define COLLECT_SURVIVORS 1
 #define GO_HOME 2
+#define MAX_BFS_TIME 10
 
-// global variable for whenever the home directory is needed
+// Resolve project resources from the ROS package path
 std::string packageDir = ros::package::getPath("auv_search_rescue");
 std::string patExe = packageDir + "/tools/PAT3.Console.exe";
 std::string patHome = packageDir + "/pat/return_home_rescue.csp";
