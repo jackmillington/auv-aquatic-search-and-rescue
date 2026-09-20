@@ -2,6 +2,7 @@
 #include <std_msgs/Int32.h>
 #include <std_msgs/Int32MultiArray.h>
 #include <ros/ros.h>
+#include <ros/package.h>
 #include <streambuf>
 #include <fstream>
 #include <map>
@@ -39,9 +40,8 @@ int numHostiles = 0;
 // initialise check to see if submarine has already been spawned (its moved if already spawned)
 bool submarine1Spawned = false;
 bool submarine2Spawned = false;
-// home directory and model directory
-std::string homeDir = getenv("HOME");
-std::string modelDir = homeDir + "/catkin_ws/src/3806ict_auv_search_rescue/models/";
+// Resolve Gazebo model assets from the installed ROS package.
+std::string modelDir = ros::package::getPath("auv_search_rescue") + "/models/";
 
 // comparison function for Point
 struct ComparePoints
